@@ -1,3 +1,10 @@
+require 'rubygems'
+require 'terminal-table/import'
+
+def limpiar_pantalla
+  system('clear')
+end
+
 cola ={
   vacio:true,
   size:0,
@@ -19,7 +26,7 @@ begin
   print 'Ingrese una opcion: '
   opcion=gets.chomp
   case opcion
-  when '1' 
+  when '1'
     begin
       limpiar_pantalla()
       puts "\tRegistro de Libros"
@@ -44,5 +51,5 @@ begin
     end while opcion1 != '7'
   when '2'
   end
-  limpiar_pantalla() 
+  limpiar_pantalla()
 end while opcion != '3'
