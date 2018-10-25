@@ -163,4 +163,4 @@ Metrics/ParameterLists:
   Enabled: false
 
 Metrics/PerceivedComplexity:
-  Enabled: false
+Enabled: false
