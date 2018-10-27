@@ -5,6 +5,51 @@ def limpiar_pantalla
   system('clear')
 end
 
+def buscar_libro(pila)
+  libro = pila[:tope]
+  print 'Ingrese el ISBN del Libro: '
+   isbn = gets.chomp
+  contador=1
+  a=0
+  while contador <= pila[:size]
+    if isbn == libro[:ISBN]
+      contador=pila[:size]+1
+      a=1
+    elsif libro [:siguiente]==nil&&libro[:ISBN]!=isbn
+      a=0
+    else
+      libro = libro[:siguiente]
+    end
+    contador+=1
+  end
+  if a==1
+    limpiar_pantalla
+    user_table = table do |t|
+      t.headings = 'ISBN', 'Nombre del Libro', 'Autor', 'Precio', 'Existencias'
+      t << [
+        libro[:ISBN],
+        libro[:nombre],
+        libro[:autor],
+        libro[:Precio],
+        libro[:existencias]
+      ]
+    end
+    puts user_table
+  else
+    limpiar_pantalla
+    puts 'El libro no se encuentra en el sistema'
+  end
+  gets()
+  end
+end
+
+venta ={
+  tope:nil,
+  max:20,
+  size:0
+  vacio:true,
+  final:nil
+}
 cola ={
   vacio:true,
   size:0,
@@ -44,6 +89,7 @@ begin
       when '1'
       when '2'
       when '3'
+        buscar_libro(pila)
       when '4'
       when '5'
       when '6'
