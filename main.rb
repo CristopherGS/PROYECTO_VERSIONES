@@ -63,7 +63,7 @@ pila ={
   size:0
 }
 begin
-  puts "\tBiblioteca"
+  puts "\tBiblioteca de lirbros"
   puts 'Listado de opciones: '
   puts '1. Registro de Libros'
   puts '2. Control de Ventas'
