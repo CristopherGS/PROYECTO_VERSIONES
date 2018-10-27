@@ -99,3 +99,28 @@ begin
   end
   limpiar_pantalla()
 end while opcion != '3'
+
+
+def listado_de_libros(pila)
+  if pila[:tope] == nil
+    puts 'No Hay Libros Ingresados O En Existencia'
+  else
+  tabla = Terminal::Table.new do |t|
+    t.title = 'Listado de Libros'
+    t.headings = ['ISB', 'NOMBRE', 'PRECIO','AUTOR','EXISTENCIAS']
+
+    aux = pila[:tope]
+    loop do
+      t.add_row([
+        aux[:ISBN],
+        aux[:nombre],
+        aux[:precio],
+        aux[:autor],
+        aux[:existencias]
+      ])
+      if aux[:siguiente] == nil
+        break
+      end
+      aux = aux[:siguiente]
+    end
+  end
