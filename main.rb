@@ -5,31 +5,81 @@ def limpiar_pantalla
   system('clear')
 end
 
-def buscar_libro(pila,isbn)
-  libro = pila[:tope]
-  contador=1
-  while contador<=pila[:size]
-    if libro[:ISBN]==isbn
-      contador=pila[:size]+1
-      return libro
-    elsif libro[:siguiente]==nil && libro[:ISBN]!=isbn
-      return 'El libro que ingreso no existe en el sistema'
-      break
+def registro_libros(pila, cola)
+  if cola[:vacio]
+    puts 'No se han ingresado autores al sistema, enter para continuar'
+    gets
+  else
+    print 'Ingrese el nombre del autor: '
+    nombre = gets.chomp
+    aux_autor = buscar_autor(cola,nombre)
+    #CHECAR ESTO EN FUNCION DE BUSCAR AUTOR
+    if aux_autor == '***El autor no existe en el sistema***'
+      puts "Este autor no se ha registrado"
     else
-      nuevo_elemento = libro[:siguiente]
-      libro = nuevo_elemento
-      contador+=1
+      if pila[:esta_vacio]
+        print 'Ingrese el ISBN del libro: '
+        isbn = gets.chomp
+        print 'Ingrese el nombre del libro: '
+        nomlibro = gets.chomp
+        print 'Ingrese el precio del libro: '
+        preclibro = gets.to_i
+        libro = {
+          nombre:nomlibro,
+          ISBN:isbn,
+          autor: nombre,
+          precio: preclibro,
+          existencias: 1,
+          siguiente: nil
+        }
+        pila[:tope] = libro
+        pila[:vacio] = false
+        pila[:size] += 1
+        aux_autor[:libros] += 1
+      else
+        print 'Ingrese el ISBN del libro: '
+        isbn = gets.chomp
+        aux = buscar_libro(pila,isbn)
+        if aux == 'El libro que ingreso no existe en el sistema'
+          print 'Ingrese el nombre del libro: '
+          nomlibro = gets.chomp
+          print 'Ingrese el precio del libro: '
+          preclibro = gets.to_i
+          libro = {
+            nombre:nomlibro,
+            ISBN:isbn,
+            autor: nombre,
+            precio: preclibro,
+            existencias: 1,
+            siguiente: nil
+          }
+          libro[:siguiente] = pila[:tope]
+          pila[:tope] = libro
+          pila[:size] += 1 
+          aux_autor[:libros] += 1
+        else
+          if nombre == aux[:autor]
+            puts "El ISBN ingresado pertenece al libro -#{aux[:nombre]}-"
+            puts "Perteneciente al autor -#{aux[:autor]}-"
+            puts "se le sumara una a las existencias de este libro."
+            aux[:existencias]+=1
+          else
+            puts "El ISBN #{isbn} le pertene al  libro -#{aux[:nombre]}-"
+            puts "Perteneciente al autor -#{aux[:autor]}-"
+            puts "Ingrese un ISBN DIFERENTE!!!"
+          end
+        end
+      end
     end
   end
 end
 
 def lista_libros(pila)
-  limpiar_pantalla
   if pila[:tope] == nil
     puts 'No Hay Libros Ingresados O En Existencia'
   else
     user_table=table do |t|
-      t.title = '*-*-*-*-LISTA DE LIBROS-*-*-*-*'
+      t.title = 'Lista de Libros'
       t.headings = 'ISB', 'NOMBRE', 'PRECIO','AUTOR','EXISTENCIAS'
       aux = pila[:tope]
       loop do
@@ -48,11 +98,28 @@ def lista_libros(pila)
     end
       puts user_table
   end
-  gets()
+  gets
+end
+
+def buscar_libro(pila,isbn)
+  libro = pila[:tope]
+  contador=1
+  while contador<=pila[:size]
+    if libro[:ISBN]==isbn
+      contador=pila[:size]+1
+      return libro
+    elsif libro[:siguiente]==nil && libro[:ISBN]!=isbn
+      return 'El libro que ingreso no existe en el sistema'
+      break
+    else
+      nuevo_elemento = libro[:siguiente]
+      libro = nuevo_elemento
+      contador+=1
+    end
+  end
 end
 
 def buscar_libro1(pila)
-  limpiar_pantalla
   libro = pila[:tope]
   print 'Ingrese el ISBN del Libro: '
    isbn = gets.chomp
@@ -72,7 +139,7 @@ def buscar_libro1(pila)
   if a==1
     limpiar_pantalla
     user_table = table do |t|
-      t.title = '*-*-*-*-Buscador de Libros-*-*-*-*'
+      t.title = 'Buscador de Libros'
       t.headings = 'ISBN', 'Nombre del Libro', 'Autor', 'Precio', 'Existencias'
       t << [
         libro[:ISBN],
@@ -87,7 +154,7 @@ def buscar_libro1(pila)
     limpiar_pantalla
     puts 'El libro no se encuentra en el sistema'
   end
-  gets()
+  gets
 end
 
 venta ={
@@ -113,60 +180,42 @@ pila ={
 }
 
 begin
-  puts "\tBiblioteca de lirbros"
+  puts "\tBiblioteca de libros"
   puts 'Listado de opciones: '
   puts '1. Registro de Libros'
   puts '2. Control de Ventas'
   puts '3. Salir'
   print 'Ingrese una opcion: '
-  opcion=gets.chomp
-  case opcion
-  when '1'
+  opcion = gets.chomp
+  limpiar_pantalla()
+  if opcion == '1'
     begin
-      limpiar_pantalla()
       puts "\tRegistro de Libros"
       puts 'Listado de opciones: '
-      puts '1. Registro de Nuevo Libro'
-      puts '2. Registro de Nuevo Autor'
-      puts '3. Buscar Libro'
-      puts '4. Buscar Autor'
-      puts '5. Lista de Libros'
-      puts '6. Lista de Autores'
+      puts '1. Registro de nuevos Libros'
+      puts '2. Registro de autores'
+      puts '3. Lista de Libros'
+      puts '4. Lista de Autores'
+      puts '5. Buscar libro'
+      puts '6. Buscar Autor'
       puts '7. Salir'
       print 'Ingrese una opcion: '
-      opcion1 = gets.chomp
-      case opcion1
-      when '1'
-        registro_nuevo_libro(plia,cola)
-      when '2'
-        nuevo_autor(cola)
-      when '3'
-        buscar_libro1(pila)
-      when '4'
-        mostrar_autor(cola,pila)
-      when '5'
-        listado_de_libros(pila)
-      when '6'
+      opc_2 = gets.chomp
+      if opc_2 == '1'
+        registro_libros(pila, cola)
+      elsif opc_2 == '2'
+        # registro_autores(cola)
+      elsif opc_2 == '3'
         lista_libros(pila)
-      end
-    end while opcion1 != '7'
-  when '2'
-    begin
-      puts "\tControl de Ventas"
-      puts 'Listado de opciones: '
-      puts '1. Registro de una Venta'
-      puts '2. Buscar una Venta'
-      puts '3. Listado de Ventas'
-      puts '4. Salir'
-      opcion2=gets.chomp
-      case opcion2
-      when '1'
-        registro_de_ventas(venta,pila)
-      when '2'
-        mostrar_una_venta(venta)
-      when '3'
-      end
-    end while opcion2 !='4'
+      elsif opc_2 == '4'
+        # lista_autores(cola)
+      elsif opc_2 == '5'
+        buscar_libro1(pila)
+      elsif opc_2 == '6'
+        # buscar_autor(cola, pila)
+    end
+    limpiar_pantalla()
+    end while opc_2 != '7'
   end
-  limpiar_pantalla()
+ limpiar_pantalla()
 end while opcion != '3'
