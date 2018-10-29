@@ -80,7 +80,7 @@ def registro_libros(pila, cola)
           }
           libro[:siguiente] = pila[:tope]
           pila[:tope] = libro
-          pila[:size] += 1 
+          pila[:size] += 1
           aux_autor[:libros] += 1
         else
           if nombre == aux[:autor]
@@ -299,7 +299,7 @@ def buscar_libro1(pila)
         libro[:ISBN],
         libro[:nombre],
         libro[:autor],
-        libro[:Precio],
+        libro[:precio],
         libro[:existencias]
       ]
     end
