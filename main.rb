@@ -28,9 +28,7 @@ def lista_autores(cola)
     puts tabla
     end
     gets
-  end
-
-
+end
 
 def registro_libros(pila, cola)
   if cola[:vacio]
@@ -41,7 +39,7 @@ def registro_libros(pila, cola)
     nombre = gets.chomp
     aux_autor = buscar_autor(cola,nombre)
     #CHECAR ESTO EN FUNCION DE BUSCAR AUTOR
-    if aux_autor == '***El autor no existe en el sistema***'
+    if aux_autor == 'El autor no esta registrado'
       puts "Este autor no se ha registrado"
     else
       if pila[:vacio]
@@ -128,6 +126,132 @@ def lista_libros(pila)
   gets
 end
 
+def registro_autores(cola)
+  if cola[:max] > 0
+    if cola[:vacio]
+      print 'Ingrese el nombre del nuevo autor: '
+      nombre = gets.chomp
+      autor = {
+        nombre: nombre,
+        libros: 0,
+        siguiente: nil
+      }
+      cola[:tope] = autor
+      cola[:final] = autor
+      cola[:vacio] = false
+      cola[:max] -= 1
+      cola[:size] += 1
+    else
+      print 'Ingrese el nombre del nuevo autor: '
+      nombre = gets.chomp
+      elemento = cola[:tope]
+      c = 1
+      c2 = 0
+      while c <= cola[:size]
+        if elemento[:nombre] == nombre
+          c2 += 1
+        end
+        if c != cola[:size]
+          aux_elemento = elemento[:siguiente]
+          elemento = aux_elemento
+        end
+        c += 1
+      end  
+      if c2 > 0
+        puts 'Ya existe un autor registrado con el mismo nombre'
+      else
+        autor = {
+          nombre:nombre,
+          libros: 0,
+          libros1: nil,
+          vacio: true,
+          siguiente:nil,
+        }
+        aux = cola[:final]
+        aux[:siguiente] = autor
+        cola[:final] = autor
+        cola[:max]-=1
+        cola[:size]+=1  
+      end
+    end
+  else
+    puts "Ya no hay espacio para registrar mas autores, hable con su proveedor para ampliar el espacio"
+  end
+  print 'Presione enter para continuar'
+  gets
+  limpiar_pantalla
+end
+
+def buscar_autor(cola,nombre)
+  elemento = cola[:tope]
+  c = 1
+  while c <= cola[:size]
+    if elemento[:nombre] == nombre
+      c=6
+      return elemento
+      break
+    elsif   elemento[:siguiente] == nil && elemento[:valor] != nombre
+      return 'El autor no esta registrado'
+      break
+    else
+      aux = elemento[:siguiente]
+      elemento = aux
+      c+=1
+    end
+  end
+end
+
+def buscar_autor1(cola,pila)
+  if cola[:max]==5
+    puts 'No hay autores registrados'
+  else
+    print 'Ingrese el nombre del autor: '
+    nombre = gets.chomp
+    elemento = buscar_autor(cola,nombre)
+    if elemento =='El autor no esta registrado'
+      puts elemento
+    else
+      if elemento[:libros] == 0
+        tabla = Terminal::Table.new do |t|
+        t.title = "Nombre Autor: #{elemento[:nombre]}"
+        t.add_row(['El autor no tiene ningun libro'])
+        end
+        puts tabla
+      else
+        tope = pila[:tope]
+        tabla = Terminal::Table.new do |t|
+        t.title = " Autor -#{elemento[:nombre]}-"
+        t.headings=(['ISBN','NOMBRE','PRECIO','EXISTENCIAS'])
+        loop do
+          if tope[:autor] == elemento[:nombre]
+            t.add_row([
+              tope[:ISBN],
+              tope[:nombre],
+              tope[:precio],
+              tope[:existencias]
+
+            ])
+            if tope[:siguiente] == nil
+              break
+            end
+            tope = tope[:siguiente]
+          else
+            if tope[:siguiente] == nil
+              break
+            end
+            tope = tope[:siguiente]
+          end
+        end
+
+        end
+        puts tabla
+      end
+    end
+  end
+  print 'Presione enter para continuar'
+  gets
+end
+
 def buscar_libro(pila,isbn)
   libro = pila[:tope]
   contador=1
@@ -184,66 +308,6 @@ def buscar_libro1(pila)
   gets
 end
 
-def registro_autores(cola)
-if cola[:max] > 0
-  if cola[:vacio]
-    puts 'ingrese el nombre del nuevo autor'
-    nombre = gets.chomp
-
-    autor = {
-      nombre: nombre,
-      libros: 0,
-      siguiente: nil
-    }
-
-    cola[:tope] = autor
-    cola[:final] = autor
-    cola[:vacio] = false
-    cola[:max] -= 1
-    cola[:size] += 1
-  else
-    puts 'ingrese el nombre del nuevo autor'
-    nombre = gets.chomp
-    elemento = cola[:tope]
-    c = 1
-    c2 = 0
-    while c <= cola[:size]
-      if elemento[:nombre] == nombre
-        c2 += 1
-      end
-      if c != cola[:size]
-        aux_elemento = elemento[:siguiente]
-        elemento = aux_elemento
-      end
-      c += 1
-  end  
-
-  if c2 > 0
-    puts 'Ya existe un autor registrado con el mismo nombre'
-  else
-    autor = {
-      nombre:nombre_autor,
-      libros: 0,
-      libros1: nil,
-      vacio: true,
-      siguiente:nil,
-    }
-    a = cola[:final]
-    a[:siguiente] = autor
-    cola[:final] = autor
-    cola[:max]-=1
-    cola[:size]+=1
-end
-end
-else
-  puts "Ya no hay espacio para registrar mas autores, hable con su proveedor para ampliar el espacio"
-
-end
-gets ()
-limpiar_pantalla
-end
-
-
 venta ={
   tope:nil,
   max:20,
@@ -299,7 +363,7 @@ begin
       elsif opc_2 == '5'
         buscar_libro1(pila)
       elsif opc_2 == '6'
-        # buscar_autor(cola, pila)
+        buscar_autor1(cola, pila)
     end
     limpiar_pantalla()
     end while opc_2 != '7'
