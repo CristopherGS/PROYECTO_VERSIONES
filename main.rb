@@ -1,7 +1,257 @@
 require 'rubygems'
 require 'terminal-table/import'
 
+def limpiar_pantalla
+  system('clear')
+end
 
+def lista_autores(cola)
+  limpiar_pantalla
+  if cola[:vacio]
+    puts "No exiten autores"
+  else
+    user_table=table  do |t|
+      t.title = "LISTADO DE AUTORES"
+      t.headings = 'NOMBRE DEL AUTOR', 'LIBROS'
+       aux = cola[:tope]
+      loop do
+        sig = aux[:siguiente]
+        t << [
+          aux[:nombre],
+          aux[:libros]
+        ]
+        if aux[:siguiente] == nil
+          break
+        end
+        aux = aux[:siguiente]
+      end
+    end
+    puts user_table
+    end
+    gets
+end
+
+def registro_libros(pila, cola)
+  limpiar_pantalla
+  if cola[:vacio]
+    puts 'No se han ingresado autores al sistema'
+  else
+    print 'Ingrese el nombre del autor: '
+    nombre = gets.chomp
+    aux_autor = buscar_autor(cola,nombre)
+    if aux_autor == 'El autor no esta registrado'
+      puts "Este autor no se ha registrado"
+    else
+      if pila[:vacio]
+        print 'Ingrese el ISBN del libro: '
+        isbn = gets.chomp
+        print 'Ingrese el nombre del libro: '
+        nomlibro = gets.chomp
+        print 'Ingrese el precio del libro: '
+        preclibro = gets.to_i
+        libro = {
+          nombre:nomlibro,
+          ISBN:isbn,
+          autor: nombre,
+          precio: preclibro,
+          existencias: 1,
+          siguiente: nil
+        }
+        pila[:tope] = libro
+        pila[:vacio] = false
+        pila[:size] += 1
+        aux_autor[:libros] += 1
+      else
+        print 'Ingrese el ISBN del libro: '
+        isbn = gets.chomp
+        aux = buscar_libro(pila,isbn)
+        if aux == 'El libro que ingreso no existe en el sistema'
+          print 'Ingrese el nombre del libro: '
+          nomlibro = gets.chomp
+          print 'Ingrese el precio del libro: '
+          preclibro = gets.to_i
+          libro = {
+            nombre:nomlibro,
+            ISBN:isbn,
+            autor: nombre,
+            precio: preclibro,
+            existencias: 1,
+            siguiente: nil
+          }
+          libro[:siguiente] = pila[:tope]
+          pila[:tope] = libro
+          pila[:size] += 1 
+          aux_autor[:libros] += 1
+        else
+          if nombre == aux[:autor]
+            aux[:existencias]+=1
+          else
+            puts 'ERROR, conflicto de ISBN'
+            puts 'Este ISBN ya lo contiene un libro de otro autor'
+	    gets
+          end
+        end
+      end
+    end
+  end
+  print 'Presione enter para continuar'
+  gets
+end
+
+def lista_libros(pila)
+  limpiar_pantalla
+  if pila[:tope] == nil
+    puts 'No Hay Libros Ingresados O En Existencia'
+  else
+    user_table=table do |t|
+      t.title = 'LISTA DE lIBROS'
+      t.headings = 'ISB', 'NOMBRE', 'PRECIO','AUTOR','EXISTENCIAS'
+      aux = pila[:tope]
+      loop do
+       t << [
+        aux[:ISBN],
+        aux[:nombre],
+        aux[:precio],
+        aux[:autor],
+        aux[:existencias]
+      ]
+       if aux[:siguiente] == nil
+          break
+       end
+       aux = aux[:siguiente]
+      end
+    end
+      puts user_table
+  end
+  gets
+end
+
+def registro_autores(cola)
+  limpiar_pantalla
+  if cola[:size] < cola[:max]
+    if cola[:vacio]
+      print 'Ingrese el nombre del nuevo autor: '
+      nombre = gets.chomp
+      autor = {
+        nombre: nombre,
+        libros: 0,
+        siguiente: nil
+      }
+      cola[:tope] = autor
+      cola[:final] = autor
+      cola[:vacio] = false
+      cola[:size] += 1
+      cola[:vacio] = false
+    else
+      print 'Ingrese el nombre del nuevo autor: '
+      nombre = gets.chomp
+      elemento = cola[:tope]
+      c = 1
+      c2 = 0
+      while c <= cola[:size]
+        if elemento[:nombre] == nombre
+          c2 += 1
+        end
+        if c != cola[:size]
+          aux_elemento = elemento[:siguiente]
+          elemento = aux_elemento
+        end
+        c += 1
+      end
+      if c2 > 0
+        puts 'Ya existe un autor registrado con el mismo nombre'
+      else
+        autor = {
+          nombre:nombre,
+          libros: 0,
+          libros1: nil,
+          vacio: true,
+          siguiente:nil,
+        }
+        aux = cola[:final]
+        aux[:siguiente] = autor
+        cola[:final] = autor
+        cola[:size]+=1
+      end
+    end
+  else
+    puts 'Se ha agotado el espacio para registrar autores'
+  end
+  print 'Presione enter para continuar'
+  gets
+  limpiar_pantalla
+end
+
+
+def buscar_autor(cola,nombre)
+  limpiar_pantalla
+  elemento = cola[:tope]
+  c = 1
+  while c <= cola[:size]
+    if elemento[:nombre] == nombre
+      c=6
+      return elemento
+      break
+    elsif   elemento[:siguiente] == nil && elemento[:valor] != nombre
+      return 'El autor no esta registrado'
+      break
+    else
+      aux = elemento[:siguiente]
+      elemento = aux
+      c+=1
+    end
+  end
+end
+
+def buscar_autor1(cola,pila)
+  limpiar_pantalla
+  if cola[:vacio]
+    puts 'No hay autores registrados'
+  else
+    print 'Ingrese el nombre del autor: '
+    nombre = gets.chomp
+    elemento = buscar_autor(cola,nombre)
+    if elemento =='El autor no esta registrado'
+      puts elemento
+    else
+      if elemento[:libros] == 0
+        user_table = table do |t|
+        t.title = "Nombre Autor: #{elemento[:nombre]}"
+        t << ['El autor no tiene ningun libro']
+        end
+        puts user_table
+      else
+        tope = pila[:tope]
+        user_table = table do |t|
+        t.title = " Autor -#{elemento[:nombre]}-"
+        t << ['ISBN','NOMBRE','PRECIO','EXISTENCIAS']
+        loop do
+          if tope[:autor] == elemento[:nombre]
+            t << [
+              tope[:ISBN],
+              tope[:nombre],
+              tope[:precio],
+              tope[:existencias]
+            ]
+            if tope[:siguiente] == nil
+              break
+            end
+            tope = tope[:siguiente]
+          else
+            if tope[:siguiente] == nil
+              break
+            end
+            tope = tope[:siguiente]
+          end
+        end
+        end
+        puts user_table
+      end
+    end
+  end
+  print 'Presione enter para continuar'
+  gets
+end
 
 def buscar_libro(pila,isbn)
   limpiar_pantalla
