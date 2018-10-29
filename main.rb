@@ -126,61 +126,6 @@ def lista_libros(pila)
   gets
 end
 
-def registro_autores(cola)
-  limpiar_pantalla
-  if cola[:size] < cola[:max]
-    if cola[:vacio]
-      print 'Ingrese el nombre del nuevo autor: '
-      nombre = gets.chomp
-      autor = {
-        nombre: nombre,
-        libros: 0,
-        siguiente: nil
-      }
-      cola[:tope] = autor
-      cola[:final] = autor
-      cola[:vacio] = false
-      cola[:size] += 1
-      cola[:vacio] = false
-    else
-      print 'Ingrese el nombre del nuevo autor: '
-      nombre = gets.chomp
-      elemento = cola[:tope]
-      c = 1
-      c2 = 0
-      while c <= cola[:size]
-        if elemento[:nombre] == nombre
-          c2 += 1
-        end
-        if c != cola[:size]
-          aux_elemento = elemento[:siguiente]
-          elemento = aux_elemento
-        end
-        c += 1
-      end
-      if c2 > 0
-        puts 'Ya existe un autor registrado con el mismo nombre'
-      else
-        autor = {
-          nombre:nombre,
-          libros: 0,
-          libros1: nil,
-          vacio: true,
-          siguiente:nil,
-        }
-        aux = cola[:final]
-        aux[:siguiente] = autor
-        cola[:final] = autor
-        cola[:size]+=1
-      end
-    end
-  else
-    puts 'Se ha agotado el espacio para registrar autores'
-  end
-  print 'Presione enter para continuar'
-  gets
-  limpiar_pantalla
-end
 
 def buscar_autor(cola,nombre)
   limpiar_pantalla
