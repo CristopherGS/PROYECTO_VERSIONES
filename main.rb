@@ -6,31 +6,33 @@ def limpiar_pantalla
 end
 
 def lista_autores(cola)
+  limpiar_pantalla
   if cola[:max] == 5
     puts "No exiten autores"
   else
-    tabla = Terminal::Table.new do |t|
+    user_table=table  do |t|
       t.title = "LISTADO DE AUTORES"
-      t.headings = ['NOMBRE DEL AUTOR', 'LIBROS']
+      t.headings = 'NOMBRE DEL AUTOR', 'LIBROS'
        aux = cola[:tope]
       loop do
         sig = aux[:siguiente]
-        t.add_row([
+        t << [
           aux[:nombre],
           aux[:libros]
-        ])
+        ]
         if aux[:siguiente] == nil
           break
         end
         aux = aux[:siguiente]
       end
     end
-    puts tabla
+    puts user_table
     end
     gets
 end
 
 def registro_libros(pila, cola)
+  limpiar_pantalla
   if cola[:vacio]
     puts 'No se han ingresado autores al sistema, enter para continuar'
     gets
@@ -38,7 +40,6 @@ def registro_libros(pila, cola)
     print 'Ingrese el nombre del autor: '
     nombre = gets.chomp
     aux_autor = buscar_autor(cola,nombre)
-    #CHECAR ESTO EN FUNCION DE BUSCAR AUTOR
     if aux_autor == 'El autor no esta registrado'
       puts "Este autor no se ha registrado"
     else
@@ -80,7 +81,7 @@ def registro_libros(pila, cola)
           }
           libro[:siguiente] = pila[:tope]
           pila[:tope] = libro
-          pila[:size] += 1 
+          pila[:size] += 1
           aux_autor[:libros] += 1
         else
           if nombre == aux[:autor]
@@ -100,11 +101,12 @@ def registro_libros(pila, cola)
 end
 
 def lista_libros(pila)
+  limpiar_pantalla
   if pila[:tope] == nil
     puts 'No Hay Libros Ingresados O En Existencia'
   else
     user_table=table do |t|
-      t.title = 'Lista de Libros'
+      t.title = 'LISTA DE lIBROS'
       t.headings = 'ISB', 'NOMBRE', 'PRECIO','AUTOR','EXISTENCIAS'
       aux = pila[:tope]
       loop do
@@ -127,6 +129,7 @@ def lista_libros(pila)
 end
 
 def registro_autores(cola)
+  limpiar_pantalla
   if cola[:max] > 0
     if cola[:vacio]
       print 'Ingrese el nombre del nuevo autor: '
@@ -156,7 +159,7 @@ def registro_autores(cola)
           elemento = aux_elemento
         end
         c += 1
-      end  
+      end
       if c2 > 0
         puts 'Ya existe un autor registrado con el mismo nombre'
       else
@@ -171,7 +174,7 @@ def registro_autores(cola)
         aux[:siguiente] = autor
         cola[:final] = autor
         cola[:max]-=1
-        cola[:size]+=1  
+        cola[:size]+=1
       end
     end
   else
@@ -183,6 +186,7 @@ def registro_autores(cola)
 end
 
 def buscar_autor(cola,nombre)
+  limpiar_pantalla
   elemento = cola[:tope]
   c = 1
   while c <= cola[:size]
@@ -202,6 +206,7 @@ def buscar_autor(cola,nombre)
 end
 
 def buscar_autor1(cola,pila)
+  limpiar_pantalla
   if cola[:max]==5
     puts 'No hay autores registrados'
   else
@@ -212,25 +217,24 @@ def buscar_autor1(cola,pila)
       puts elemento
     else
       if elemento[:libros] == 0
-        tabla = Terminal::Table.new do |t|
+        user_table = table do |t|
         t.title = "Nombre Autor: #{elemento[:nombre]}"
-        t.add_row(['El autor no tiene ningun libro'])
+        t << ['El autor no tiene ningun libro']
         end
-        puts tabla
+        puts user_table
       else
         tope = pila[:tope]
-        tabla = Terminal::Table.new do |t|
+        user_table = table do |t|
         t.title = " Autor -#{elemento[:nombre]}-"
-        t.headings=(['ISBN','NOMBRE','PRECIO','EXISTENCIAS'])
+        t << ['ISBN','NOMBRE','PRECIO','EXISTENCIAS']
         loop do
           if tope[:autor] == elemento[:nombre]
-            t.add_row([
+            t << [
               tope[:ISBN],
               tope[:nombre],
               tope[:precio],
               tope[:existencias]
-
-            ])
+            ]
             if tope[:siguiente] == nil
               break
             end
@@ -244,7 +248,7 @@ def buscar_autor1(cola,pila)
         end
 
         end
-        puts tabla
+        puts user_table
       end
     end
   end
@@ -253,6 +257,7 @@ def buscar_autor1(cola,pila)
 end
 
 def buscar_libro(pila,isbn)
+  limpiar_pantalla
   libro = pila[:tope]
   contador=1
   while contador<=pila[:size]
@@ -271,6 +276,7 @@ def buscar_libro(pila,isbn)
 end
 
 def buscar_libro1(pila)
+  limpiar_pantalla
   libro = pila[:tope]
   print 'Ingrese el ISBN del Libro: '
    isbn = gets.chomp
@@ -290,7 +296,7 @@ def buscar_libro1(pila)
   if a==1
     limpiar_pantalla
     user_table = table do |t|
-      t.title = 'Buscador de Libros'
+      t.title = 'BUSCADOR DE LIBROS'
       t.headings = 'ISBN', 'Nombre del Libro', 'Autor', 'Precio', 'Existencias'
       t << [
         libro[:ISBN],
@@ -343,8 +349,8 @@ begin
     begin
       puts "\tRegistro de Libros"
       puts 'Listado de opciones: '
-      puts '1. Registro de nuevos Libros'
-      puts '2. Registro de autores'
+      puts '1. Registro de Nuevos Libros'
+      puts '2. Registro de Autores'
       puts '3. Lista de Libros'
       puts '4. Lista de Autores'
       puts '5. Buscar libro'
@@ -367,6 +373,22 @@ begin
     end
     limpiar_pantalla()
     end while opc_2 != '7'
+  elsif opcion == '2'
+    begin
+      puts "\tControl de Ventas"
+      puts 'Listado de opciones: '
+      puts '1. Registro De Nueva Venta'
+      puts '2. Buscar una Venta'
+      puts '3. Lista de Ventas'
+      puts '4. Salir'
+      print 'Ingrese una opcion: '
+      opc_3 = gets.chomp
+      if opc_3 == '1'
+      elsif opc_3 == '2'
+      elsif opc_3 == '3'
+    end
+      limpiar_pantalla()
+    end while opc_3 != '4'
   end
  limpiar_pantalla()
 end while opcion != '3'
