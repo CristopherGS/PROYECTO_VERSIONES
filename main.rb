@@ -7,7 +7,7 @@ end
 
 def lista_autores(cola)
   limpiar_pantalla
-  if cola[:max] == 5
+  if cola[:vacio]
     puts "No exiten autores"
   else
     user_table=table  do |t|
@@ -34,8 +34,7 @@ end
 def registro_libros(pila, cola)
   limpiar_pantalla
   if cola[:vacio]
-    puts 'No se han ingresado autores al sistema, enter para continuar'
-    gets
+    puts 'No se han ingresado autores al sistema'
   else
     print 'Ingrese el nombre del autor: '
     nombre = gets.chomp
@@ -81,23 +80,22 @@ def registro_libros(pila, cola)
           }
           libro[:siguiente] = pila[:tope]
           pila[:tope] = libro
-          pila[:size] += 1
+          pila[:size] += 1 
           aux_autor[:libros] += 1
         else
           if nombre == aux[:autor]
-            puts "El ISBN ingresado pertenece al libro -#{aux[:nombre]}-"
-            puts "Perteneciente al autor -#{aux[:autor]}-"
-            puts "se le sumara una a las existencias de este libro."
             aux[:existencias]+=1
           else
-            puts "El ISBN #{isbn} le pertene al  libro -#{aux[:nombre]}-"
-            puts "Perteneciente al autor -#{aux[:autor]}-"
-            puts "Ingrese un ISBN DIFERENTE!!!"
+            puts 'ERROR, conflicto de ISBN'
+            puts 'Este ISBN ya lo contiene un libro de otro autor'
+	    gets
           end
         end
       end
     end
   end
+  print 'Presione enter para continuar'
+  gets
 end
 
 def lista_libros(pila)
@@ -130,7 +128,7 @@ end
 
 def registro_autores(cola)
   limpiar_pantalla
-  if cola[:max] > 0
+  if cola[:size] < cola[:max]
     if cola[:vacio]
       print 'Ingrese el nombre del nuevo autor: '
       nombre = gets.chomp
@@ -142,8 +140,8 @@ def registro_autores(cola)
       cola[:tope] = autor
       cola[:final] = autor
       cola[:vacio] = false
-      cola[:max] -= 1
       cola[:size] += 1
+      cola[:vacio] = false
     else
       print 'Ingrese el nombre del nuevo autor: '
       nombre = gets.chomp
@@ -173,12 +171,11 @@ def registro_autores(cola)
         aux = cola[:final]
         aux[:siguiente] = autor
         cola[:final] = autor
-        cola[:max]-=1
         cola[:size]+=1
       end
     end
   else
-    puts "Ya no hay espacio para registrar mas autores, hable con su proveedor para ampliar el espacio"
+    puts 'Se ha agotado el espacio para registrar autores'
   end
   print 'Presione enter para continuar'
   gets
@@ -207,7 +204,7 @@ end
 
 def buscar_autor1(cola,pila)
   limpiar_pantalla
-  if cola[:max]==5
+  if cola[:vacio]
     puts 'No hay autores registrados'
   else
     print 'Ingrese el nombre del autor: '
@@ -246,7 +243,6 @@ def buscar_autor1(cola,pila)
             tope = tope[:siguiente]
           end
         end
-
         end
         puts user_table
       end
