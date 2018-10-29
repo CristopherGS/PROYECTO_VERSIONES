@@ -341,7 +341,7 @@ begin
   limpiar_pantalla()
   if opcion == '1'
     begin
-      puts "\tAdministracion de libros"
+      puts "\tAdministracion de Libros"
       puts 'Listado de opciones: '
       puts '1. Registro de Nuevos Libros'
       puts '2. Registro de Autores'
